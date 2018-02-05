@@ -33,8 +33,6 @@ $app->add(new App\Middleware\ChatMiddleware($container));
 
 $app->add($container->csrf);
 
-v::with('App\\Validation\\Rules\\');
-
 /*** Routes ***/
 
 $app->get('/', '\App\Controller\SignController:signView')->setName('signView');
