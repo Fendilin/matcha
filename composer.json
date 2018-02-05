@@ -5,8 +5,7 @@
         "slim/flash": "^0.2.0",
         "slim/pdo": "^1.10",
         "swiftmailer/swiftmailer": "^6.0",
-        "slim/csrf": "^0.8.1",
-        "phpunit/phpunit": "^7.0"
+        "slim/csrf": "^0.8.1"
     },
     "autoload": {
         "psr-4": {
