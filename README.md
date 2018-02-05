@@ -29,3 +29,11 @@ make logs
 ```sh
 make stop
 ```
+
+## 5. docker-machine
+
+```sh
+docker-machine create Matcha
+eval $(docker-machine env Matcha)
+make re
+```
