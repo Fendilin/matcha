@@ -1,4 +1,6 @@
 $(document).ready( function () {
+    setTagWrap();
+
     $(document).on("keypress", "#hobby", function (e) {
         var key = (e.keyCode) ? e.keyCode : e.which;
         return key != 13;
@@ -26,6 +28,18 @@ $(document).ready( function () {
     $(".file-input").change(function(){
         previewUpload(this);
     });
+
+    function setTagWrap ()
+    {
+        var content = $('#tag').val();
+        console.log(content);
+        content = content.split(',');
+        jQuery.each(content, function (index, value) {
+            if (value.length !== 0) {
+                $('#tag-ticket-wrap').html($('#tag-ticket-wrap').html() + '<span class="tag_wrap" contenteditable="false"><span>' + value.toLowerCase() + '</span><a>x</a></span>');
+            }
+        });
+    }
 
     function setInputValue ()
     {
