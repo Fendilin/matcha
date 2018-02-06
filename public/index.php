@@ -69,6 +69,7 @@ $app->post('/signin', '\App\Controller\SignController:signin')->setName('signin'
 $app->post('/register', '\App\Controller\SignController:registration')->setName('register');
 $app->post('/password-reset', '\App\Controller\SignController:passwordReset')->setName('passwordReset');
 $app->post('/password-reset/{username}/{token}', '\App\Controller\SignController:resetAction')->setName('resetAction');
+$app->post('/resend-confirm', '\App\Controller\SignController:resendConfirm')->setName('resendConfirm');
 $app->post('/profile/{username}/upd/profile', '\App\Controller\ProfileController:updateProfile')->setName('updateProfile');
 $app->post('/profile/{username}/upd/info', '\App\Controller\ProfileController:updateInfo')->setName('updateInfo');
 $app->post('/profile/{username}/upd/bio', '\App\Controller\ProfileController:updateBio')->setName('updateBio');

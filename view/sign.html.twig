@@ -19,8 +19,41 @@
                     <div class="alert alert-danger galert">{{ message }}</div>
                 {% endfor %}
             {% endif %}
+            {% if flash.confirm %}
+                {% for message in flash.confirm %}
+                    <div class="alert alert-danger galert"><span>{{ message }}</span>  <a href="#" data-toggle="modal" data-target="#resend-modal">Resend</a></div>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
+    <div id="resend-modal" class="modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Email confirmation</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="resend-wrap" action="/resend-confirm" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="confirmEmail" placeholder="Your email"/>
+                            {% if flash.confirmEmail %}<small class="text-danger">{{ flash.confirmEmail | first}}</small>{% endif %}
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control btn btn-primary" type="submit" value="Resend confirmation" />
+                        </div>
+                        {{ csrf.field | raw }}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="myModal" class="modal" role="dialog">
         <div class="modal-dialog">
 
@@ -31,9 +64,10 @@
                     <h4 class="modal-title">Password reinitialisation</h4>
                 </div>
                 <div class="modal-body">
-                    <form action="/password-reset" method="POST">
+                    <form id="reset-wrap" action="/password-reset" method="POST">
                         <div class="form-group">
                             <input class="form-control" type="text" name="resetEmail" placeholder="Your email"/>
+                            {% if flash.resetEmail %}<small class="text-danger">{{ flash.resetEmail | first}}</small>{% endif %}
                         </div>
                         <div class="form-group">
                             <input class="form-control btn btn-primary" type="submit" value="Reset password" />
@@ -45,7 +79,6 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
-
         </div>
     </div>
     <div id="body">
@@ -120,5 +153,13 @@
     <script src="{{ base_url() }}/jquery/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <script>
+        if ($("#reset-wrap .form-group small").hasClass('text-danger')) {
+            $("#myModal").modal('show');
+        }
+        if ($("#resend-wrap .form-group small").hasClass('text-danger')) {
+            $("#resend-modal").modal('show');
+        }
+    </script>
 </body>
 </html>

@@ -12,8 +12,9 @@ class AuthMiddleware extends Middleware
     {
         $rout = $req->getAttribute('route');
         $route = $rout->getName();
+        $allow = ['signup', 'signin', 'activation', 'passwordReset', 'resetView', 'resetAction', 'resendConfirm'];
         if ($rout !== NULL) {
-            if ($route !== 'signup' && $route !== 'signin' && $route !== 'activation' && $route !== 'passwordReset' && $route !== 'resetView' && $route !== 'resetAction') {
+            if (!in_array($route, $allow)) {
                 if ($route !== 'signView' && (!isset($_SESSION['username']) || empty($_SESSION['username']))) {
                     if (isset($_COOKIE['username']) && !empty($_COOKIE['username'])) {
                         $_SESSION['username'] = $_COOKIE['username'];

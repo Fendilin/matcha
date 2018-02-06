@@ -85,7 +85,7 @@ class User
 
     public static function checkactivation ($username, $token)
     {
-        $date = new \DateTime();
+        $date = new \DateTime('now');
         $pdo = Pdo::getInstance();
         $sql = $pdo->getDb()->select()->from('user')->where('username', '=', $username);
         $stmt = $sql->execute();

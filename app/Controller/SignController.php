@@ -68,6 +68,7 @@ class SignController extends Controller
 
         $d = $req->getParams();
         $token = md5(microtime(TRUE) * 100000);
+        $tokenDate = new \DateTime('now');
 
         if (User::create(
                 $d['first_name'],
@@ -125,7 +126,7 @@ class SignController extends Controller
         }
         $data = User::where('username', '=', $d['sign_username']);
         if ($data[0]['active'] === 0) {
-            $this->flash->addMessage('danger', 'Please confirm your email before SignIn.');
+            $this->flash->addMessage('confirm', 'Please confirm your email before SignIn.');
 
             return $res->withRedirect('/');
         }
@@ -152,6 +153,12 @@ class SignController extends Controller
 
         if (User::checkActivation($d['username'], $d['token']) === false || User::activate($d['username']) === false)
         {
+            if (User::checkActivation($d['username'], $d['token']) === false) {
+                echo "fail";
+            } elseif (User::activate($d['username']) === false) {
+                echo "fail2";
+            }
+            die;
             $this->container->flash->addMessage('danger', 'An Error occured during Account Activation.');
             return $res->withRedirect('/');
         }
@@ -206,6 +213,14 @@ class SignController extends Controller
         $arg = $req->getParams();
         $token = md5(microtime(TRUE) * 100000);
         $tokenDate = new \DateTime('now');
+
+        $v = new Validator($this->flash, $req->getParams());
+
+        $v->setInput('resetEmail')->email();
+
+        if ($v->failed()) {
+            return $res->withRedirect($_SERVER['HTTP_REFERER']);
+        }
 
         $d = User::whereOne('email', '=', $arg['resetEmail']);
 
@@ -269,6 +284,56 @@ class SignController extends Controller
 
         $this->flash->addMessage('success', 'Password changed !');
 
+        return $res->withRedirect('/');
+    }
+
+    public function resendConfirm (Request $req, Response $res)
+    {
+        $arg = $req->getParams();
+        $token = md5(microtime(TRUE) * 100000);
+        $date = new \DateTime('now');
+        $tokenDate = $date->add(new \DateInterval('PT15M'));
+
+        $v = new Validator($this->flash, $req->getParams());
+
+        $v->setInput('confirmEmail')->email();
+
+        if ($v->failed()) {
+            return $res->withRedirect($_SERVER['HTTP_REFERER']);
+        }
+
+        $d = User::whereOne('email', '=', $arg['confirmEmail']);
+
+        if (!empty($d['username'])) {
+            $sql = $this->pdo
+                ->update([
+                    'token' => $token,
+                    'token_date' => $tokenDate->format('Y-m-d H:i:s')
+                ])
+                ->table('user')
+                ->where('username', '=', $d['username']);
+            $sql->execute();
+
+            $link =  "<a href='http://".$_SERVER['HTTP_HOST']."/activation/".urlencode($d['username'])."/".urlencode($token)."'>Link</a>";
+
+            $message = (new \Swift_Message('Email Confirmation'))
+                ->setFrom('admin@matcha.fr')
+                ->setTo($d['email'])
+                ->setBody('Follow this ' . $link . ' to confirm your email.');
+
+            if ($this->mailer->send($message) === 0) {
+                $this->flash->addMessage('danger', 'An error occured during email confirmation.');
+
+                return $res->withRedirect('/');
+            }
+        } else {
+            $this->flash->addMessage('danger', 'No user found !');
+
+            return $res->withRedirect('/');
+        }
+
+        $this->flash->addMessage('success', 'Confirmation email sent !');
+        unset($_SESSION['old']);
         return $res->withRedirect('/');
     }
 }
