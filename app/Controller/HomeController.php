@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
-use App\Model\User;
+use Alr\Sort\BubbleSort;
 use App\Model\Tag;
+use App\Model\User;
+use InvalidArgumentException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,116 +22,108 @@ class HomeController extends Controller
         return $this->view->render($res, 'home.html.twig', ['head_name' => $_SESSION['username'], 'match' => array_values($match), 'flash' => $flash, 'tags' => $tags]);
     }
 
-    public function homeFilter (Request $req, Response $res)
+    public function homeFilter(Request $request, Response $response)
     {
-        $flash = $this->flash->getMessages();
-        $param = $req->getParams();
+		$filter = $request->getParsedBody();
+
+		if (! array_key_exists('filter', $filter)) {
+			throw new InvalidArgumentException('filter value not found');
+		}
+
         $user = User::whereOne('username', '=', $_SESSION['username']);
-        $match = User::match($_SESSION['username']);
-        $match = array_values(User::delBlockedUser($match, $user['id']));
-        $match = array_values(User::homeFilter($match, $param));
-        $ret['match'] = $match;
-        $str = '';
-        
-        foreach ($match as $data) {
-            if (!empty($data)) {
-                $str .= '<div class="col-xs-12 col-md-4 ticket">';
-                $str .= '<div class="row">';
-                $str .=            '<div class="profile-img col-xs-4" style="background: url(\'/img/user/' . $data['file_1'] . '\')"></div>';
-                $str .= '<div class="col-xs-8">';
-                $str .= '<p class="username">' . ucwords($data['username']) . '</p>';
-                $str .= '<p class="age">' . $data['score'] . '</p>';
-                $str .= '<p class="from">' . ucwords($data['country']) . '<br/>' . ucwords($data['city']) . ' ' . ucwords($data['zip']) . '</p>';
-                $str .= '</div>';
-                $str .= '<div class="gender">';
-                if ($data['gender'] == 1) {
-                    $str .= '<img id="gender-img" src="/img/male.png" alt="gender" title="gender"/><br />';
-                } elseif ($data['gender'] == 2) {
-                    $str .= '<img id="gender-img" src="/img/female.png" alt="gender" title="gender"/><br />';
-                }
-                $str .= '</div>';
-                $str .= '<div class="orient">';
-                if (($data['gender'] == 1 && $data['orientation'] == 1) || ($data['gender'] == 2 && $data['orientation'] == 2)) {
-                    $str .= '<img id="orient-img" src="/img/female.png" alt="orientation" title="orientation"/>';
-                } elseif (($data['gender'] == 1 && $data['orientation'] == 2) || ($data['gender'] == 2 && $data['orientation'] == 1)) {
-                    $str .= '<img id="orient-img" src="/img/male.png" alt="orientation" title="orientation"/>';
-                } elseif ($data['orientation'] == 3) {
-                    $str .= '<img id="orient-img" src="/img/male.png" alt="orientation" title="orientation"/>';
-                    $str .= '<img id="orient-img" src="/img/female.png" alt="orientation" title="orientation"/>';
-                }
-                $str .= '</div>';
-                $str .= '<a class="profile-link" href="/profile/' . $data['username'] . '"></a>';
-                $str .= '</div>';
-                $str .= '</div>';
+
+//        $match = User::match($_SESSION['username']);
+//        $match = array_values(User::delBlockedUser($match, $user['id']));
+//        $match = array_values(User::homeFilter($match, $filter['filter']));
+//
+//		$arr = [];
+//        foreach ($match as $data) {
+//            if (!empty($data)) {
+//				$arr[] = [
+//					'file1' => $data['file_1'],
+//					'username' => ucwords($data['username']),
+//					'score' => $data['score'],
+//					'country' => ucwords($data['country']),
+//					'city' => ucwords($data['city']),
+//					'zip' => $data['zip'],
+//					'orientation' => $data['orientation'],
+//					'gender' => $data['gender'],
+//				];
+//            }
+//        }
+
+        return $response->withJson('lol');
+    }
+
+    public function sortBy(Request $request, Response $response)
+    {
+		$filter = $request->getParsedBody();
+
+		if (! is_array($filter)) {
+			throw new InvalidArgumentException('invalid filter');
+		}
+
+		if (! array_key_exists('filter', $filter)) {
+			throw new InvalidArgumentException('filter value not found');
+		}
+
+        $matches = User::match($_SESSION['username']);
+
+		switch (strtolower($filter['filter'])) {
+		case 'popularity':
+            $col = 'score';
+			break;
+		case 'localisation':
+            $col = 'zip';
+			break;
+		case 'age':
+            $col = 'birthdate';
+			break;
+		case 'commun tags':
+            $col = 'commonTags';
+			break;
+		default:
+            $col = '';
+		};
+
+		$matches = $this->sortByCol($matches, $col);
+
+		$arr = [];
+        foreach ($matches as $cur) {
+            if (!empty($cur)) {
+				$arr[] = [
+					'file1' => '../'.$cur['file_1'],
+					'username' => ucwords($cur['username']),
+					'score' => $cur['score'],
+					'country' => ucwords($cur['country']),
+					'city' => ucwords($cur['city']),
+					'zip' => $cur['zip'],
+					'orientation' => $cur['orientation'],
+					'gender' => $cur['gender'],
+				];
             }
         }
 
-        $ret['content'] = $str;
-
-        return json_encode($ret);
+        return $response->withJson($arr);
     }
 
-    public function sortBy (Request $req, Response $res)
-    {
-        $param = $req->getParams();
-        $i = 0;
-        $pada = $param['data'];
+	private function sortByCol(array $matches, string $column): array
+	{
+		$ret = $matches;
 
-        $col = '';
-        if ($param['orderBy'] === 'popularity') {
-            $col = 'score';
-        } elseif ($param['orderBy'] === 'location') {
-            $col = 'zip';
-        } elseif ($param['orderBy'] === 'age') {
-            $col = 'birthdate';
-        } elseif ($param['orderBy'] === 'tags') {
-            $col = 'commonTags';
-        }
-        while ($pada[$i]) {
-            if ($pada[$i][$col] < $pada[$i + 1][$col]) {
-                $tmp = $pada[$i + 1];
-                $pada[$i + 1] = $pada[$i];
-                $pada[$i] = $tmp;
+		$i = 0;
+		while ($ret[$i]) {
+            if ($ret[$i][$column] < $ret[$i+1][$column]) {
+                $tmp = $ret[$i+1];
+                $ret[$i+1] = $ret[$i];
+                $ret[$i] = $tmp;
                 $i = -1;
             }
-            $i++;
-        }
-        $ret = '';
-        foreach ($pada as $data) {
-            if (!empty($data)) {
-                $ret .= '<div class="col-xs-12 col-md-4 ticket">';
-                $ret .= '<div class="row">';
-                $ret .=            '<div class="profile-img col-xs-4" style="background: url(\'/img/user/' . $data['file_1'] . '\')"></div>';
-                $ret .= '<div class="col-xs-8">';
-                $ret .= '<p class="username">' . ucwords($data['username']) . '</p>';
-                $ret .= '<p class="age">' . $data['score'] . '</p>';
-                $ret .= '<p class="from">' . ucwords($data['country']) . '<br/>' . ucwords($data['city']) . ' ' . ucwords($data['zip']) . '</p>';
-                $ret .= '</div>';
-                $ret .= '<div class="gender">';
-                if ($data['gender'] == 1) {
-                    $ret .= '<img id="gender-img" src="/img/male.png" alt="gender" title="gender"/><br />';
-                } elseif ($data['gender'] == 2) {
-                    $ret .= '<img id="gender-img" src="/img/female.png" alt="gender" title="gender"/><br />';
-                }
-                $ret .= '</div>';
-                $ret .= '<div class="orient">';
-                if (($data['gender'] == 1 && $data['orientation'] == 1) || ($data['gender'] == 2 && $data['orientation'] == 2)) {
-                    $ret .= '<img id="orient-img" src="/img/female.png" alt="orientation" title="orientation"/>';
-                } elseif (($data['gender'] == 1 && $data['orientation'] == 2) || ($data['gender'] == 2 && $data['orientation'] == 1)) {
-                    $ret .= '<img id="orient-img" src="/img/male.png" alt="orientation" title="orientation"/>';
-                } elseif ($data['orientation'] == 3) {
-                    $ret .= '<img id="orient-img" src="/img/male.png" alt="orientation" title="orientation"/>';
-                    $ret .= '<img id="orient-img" src="/img/female.png" alt="orientation" title="orientation"/>';
-                }
-                $ret .= '</div>';
-                $ret .= '<a class="profile-link" href="/profile/' . $data['username'] . '"></a>';
-                $ret .= '</div>';
-                $ret .= '</div>';
-            }
+			++$i;
         }
 
-        return $ret;
-    }
+		return $ret;
+	}
 
     public function logout (Request $req, Response $res)
     {
