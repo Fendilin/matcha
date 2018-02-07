@@ -4,7 +4,7 @@
 use Faker\Factory;
 use Faker\Generator;
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 const MAX_USERS = 500;
 
@@ -53,6 +53,25 @@ function generateImage(string $gender): string
 	];
 
 	return $images[$index][rand(0, 2)];
+}
+
+/**
+ * The generateTag method generates tag array.
+ *
+ * @return array Tag array
+ */
+function generateTags(): array
+{
+	$tags = [];
+
+	for ($i = 0; $i < 7; ++$i) {
+		$tagId = rand(1, 27);
+		if (false === in_array($tagId, $tags)) {
+			$tags[] = $tagId;
+		}
+	}
+
+	return $tags;
 }
 
 /**
@@ -163,6 +182,28 @@ function buildUserQuery(int $id, array $user, bool $last): string {
 	);
 }
 
+/**
+ * The buildTagQuery function builds tag query.
+ *
+ * @param int   $id   User unique identifier
+ * @param []int $tags User tags
+ *
+ * @return string Tag query
+ */
+function buildTagQuery(int $id, array $tags): string {
+	$query = '';
+
+	foreach ($tags as $k => $tag) {
+		$query .= sprintf(
+			'INSERT INTO user_tag VALUES (%d, %d);',
+			$id,
+			$tag
+		);
+	}
+
+	return $query;
+}
+
 // Truncate table
 $query = 'TRUNCATE `user`;'.PHP_EOL;
 
@@ -180,5 +221,10 @@ for ($i = 1; $i <= $lim; ++$i) {
 
 // Build last user creation query
 $query .= buildUserQuery($i, $user, true);
+
+for ($i = 1; $i <= $lim; ++$i) {
+	$tags = generateTags();
+	$query .= buildTagQuery($i, $tags);
+}
 
 echo $query.PHP_EOL;
