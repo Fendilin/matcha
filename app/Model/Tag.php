@@ -117,7 +117,6 @@ class Tag
         $pdo = Pdo::getInstance();
         $sql = $pdo->getDb()->select()->from('user_tag')->where($col, $symb, $value);
         $data = $sql->execute();
-
         return $data->fetchAll();
     }
 
