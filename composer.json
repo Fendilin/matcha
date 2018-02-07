@@ -10,11 +10,18 @@
         "geocoder-php/google-maps-provider": "^4.1",
         "php-http/guzzle6-adapter": "^1.1",
         "php-http/message": "^1.6",
-        "fzaninotto/faker": "^1.7"
+        "fzaninotto/faker": "^1.7",
+        "alr-lab/sort": "^0.2.0"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/"
+        }
+    },
+    "repositories": {
+        "sort": {
+            "type": "github",
+            "url": "https://github.com/alr-lab/sort"
         }
     }
 }

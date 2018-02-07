@@ -4,6 +4,7 @@
     {{ parent() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
 {% endblock %}
+
 {% block css %}homepage.css{% endblock %}
 {% block title %} Homepage {% endblock %}
 
@@ -76,7 +77,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                {{ csrf.field | raw }}
+				{{ csrf.field | raw }}
                 <div class="clearfix"></div>
             </div>
         </form>
@@ -84,7 +85,7 @@
     <div class="row">
         <div class="form-group col-xs-3">
             <strong>Sort by: </strong>
-            <select class="sortBy form-control">
+            <select id="sort" class="sortBy form-control">
                 <option class="text-muted">-- Sort by</option>
                 <option>Popularity</option>
                 <option>Localisation</option>
@@ -130,61 +131,31 @@
 {% block js %}
     {{ parent() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-    <script>
-        var match = {{ match|json_encode|raw }};
-        $('.sortBy').change(function () {
-            if ($(this).val() === "Popularity") {
-                 $.get("/sort-by", {data : match, orderBy: 'popularity' }, function (data) {
-                     $("#match-container").empty();
-                     $("#match-container").html(data);
-                 });
-            } else if ($(this).val() === "Localisation") {
-                $.get("/sort-by", {data : match, orderBy: 'location' }, function (data) {
-                    $("#match-container").empty();
-                    $("#match-container").html(data);
-                });
-            } else if ($(this).val() === "Age") {
-                $.get("/sort-by", {data : match, orderBy: 'age' }, function (data) {
-                    $("#match-container").empty();
-                    $("#match-container").html(data);
-                });
-            } else if ($(this).val() === "Commun tags") {
-                $.get("/sort-by", {data : match, orderBy: 'tags' }, function (data) {
-                    $("#match-container").empty();
-                    $("#match-container").html(data);
-                });
-            }
-        });
-
-        $('.homeInput').change(function () {
-            $.get("/homeFilter", {
-                minAge: $("#minAge").val(),
-                maxAge: $("#maxAge").val(),
-                minScore: $("#minScore").val(),
-                maxScore: $("#maxScore").val(),
-                location: $("#location").val(),
-                tags: $("#tags").val()
-            }, function(data) {
-                data = JSON.parse(data);
-                $("#match-container").empty();
-                $("#match-container").html(data.content);
-                match = data.match;
-            });
-        });
-        $('#location').keyup(function (e) {
-            $.get("/searchFilter", {
-                minAge: $("#minAge").val(),
-                maxAge: $("#maxAge").val(),
-                minScore: $("#minScore").val(),
-                maxScore: $("#maxScore").val(),
-                location: $("#location").val(),
-                tags: $("#tags").val()
-            }, function(data) {
-                data = JSON.parse(data);
-                $("#match-container").empty();
-                $("#match-container").html(data.content);
-                match = data.match;
-            });
-        });
+    <script src="js/home-filter.js"></script>
+<script id="mytemplate" type="text/template">
+    <div class="col-xs-12 col-md-4 ticket">
+        <div class="row">
+            <div class="profile-img col-xs-4" style="background: url('{{ base_url() }}/img/user/{{ m.file_1 }}')"></div>
+            <div class="col-xs-8">
+                <p class="username"></p>
+                <p class="age"></p>
+                <p class="from"></p>
+            </div>
+            <div class="gender">
+                <img id="gender-img" src="" alt="gender" title="gender"/><br />
+            </div>
+            <div class="orient">
+                {#{% if (m.gender == 1 and m.orientation == 1) or (m.gender == 2 and m.orientation == 2) %}#}
+                    {#<img id="orient-img" src="{{ base_url() }}/img/female.png" alt="orientation" title="orientation"/>#}
+                {#{% elseif (m.gender == 1 and m.orientation == 2) or (m.gender == 2 and m.orientation == 1) %}#}
+                    {#<img id="orient-img" src="{{ base_url() }}/img/male.png" alt="orientation" title="orientation"/>#}
+                {#{% elseif m.orientation == 3 %}#}
+                    {#<img id="orient-img" src="{{ base_url() }}/img/male.png" alt="orientation" title="orientation"/>#}
+                    {#<img id="orient-img" src="{{ base_url() }}/img/female.png" alt="orientation" title="orientation"/>#}
+                {#{% endif %}#}
+            </div>
+            <a class="profile-link" href=""></a>
+        </div>
+    </div>
     </script>
 {% endblock %}

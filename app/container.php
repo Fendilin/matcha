@@ -93,16 +93,5 @@ $container['mailer'] = function ($container) {
 };
 
 $container['csrf'] = function ($c) {
-    $guard = new \Slim\Csrf\Guard();
-    $guard->setFailureCallable(function ($request, $response, $next) {
-        $request = $request->withAttribute("csrf_status", false);
-        if (false === $request->getAttribute('csrf_status')) {
-            $flash = new \Slim\Flash\Messages();
-            $flash->addMessage('danger', 'Forme timed out, please reload your page !');
-            return $response->withRedirect($_SERVER['HTTP_REFERER']);
-        } else {
-            return $next($request, $response);
-        }
-    });
-    return $guard;
+    return new \Slim\Csrf\Guard();
 };

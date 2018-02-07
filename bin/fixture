@@ -186,18 +186,19 @@ function buildUserQuery(int $id, array $user, bool $last): string {
  * The buildTagQuery function builds tag query.
  *
  * @param int   $id   User unique identifier
- * @param []int $tags User tags
+ * @param array $tags User tags
  *
  * @return string Tag query
  */
 function buildTagQuery(int $id, array $tags): string {
 	$query = '';
 
-	foreach ($tags as $k => $tag) {
+	foreach ($tags as $tag) {
 		$query .= sprintf(
-			'INSERT INTO user_tag VALUES (%d, %d);',
+			'INSERT INTO user_tag VALUES (%d, %d);%s',
 			$id,
-			$tag
+			$tag,
+			PHP_EOL
 		);
 	}
 
@@ -206,6 +207,7 @@ function buildTagQuery(int $id, array $tags): string {
 
 // Truncate table
 $query = 'TRUNCATE `user`;'.PHP_EOL;
+$query .= 'TRUNCATE `user_tag`;'.PHP_EOL;
 
 // Prepare user creation query
 $query .= 'INSERT INTO `user` VALUES'.PHP_EOL;

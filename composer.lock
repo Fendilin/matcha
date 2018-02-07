@@ -4,8 +4,47 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1d7f7429520ef5366e2aa0c7ffd3773",
+    "content-hash": "e42426fac52ea342b5a5dc2ef862ae6b",
     "packages": [
+        {
+            "name": "alr-lab/sort",
+            "version": "v0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alr-lab/sort.git",
+                "reference": "60092bcb17eca1184968d7a00968684b39ce1353"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alr-lab/sort/zipball/60092bcb17eca1184968d7a00968684b39ce1353",
+                "reference": "60092bcb17eca1184968d7a00968684b39ce1353",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Alr\\Sort\\": "src/Sort/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexandre Le Roy",
+                    "email": "alexandre.le-roy@student.42.fr"
+                }
+            ],
+            "description": "Sorting algorithms",
+            "support": {
+                "source": "https://github.com/alr-lab/sort/tree/v0.2",
+                "issues": "https://github.com/alr-lab/sort/issues"
+            },
+            "time": "2018-02-01T02:33:24+00:00"
+        },
         {
             "name": "clue/stream-filter",
             "version": "v1.4.0",
