@@ -163,23 +163,23 @@ class User
             $provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient);
             $geocoder = new \Geocoder\StatefulGeocoder($provider, 'fr');
             $result = $geocoder->reverseQuery(ReverseQuery::fromCoordinates($params['lat'],$params['lon']));
-            $geoloc['country'] = $result->get(1)->getCountry();
-            $geoloc['state'] = $result->get(1)->getAdminLevels()->get(1)->getName();
-            $geoloc['city'] = $result->get(1)->getLocality();
-            $geoloc['zip'] = $result->get(1)->getPostalCode();
+            $geoloc['country'] = strtolower($result->get(1)->getCountry());
+            $geoloc['state'] = strtolower($result->get(1)->getAdminLevels()->get(1)->getName());
+            $geoloc['city'] = strtolower($result->get(1)->getLocality());
+            $geoloc['zip'] = strtolower($result->get(1)->getPostalCode());
 
         } else {
             $ip = file_get_contents('https://api.ipify.org');
             $query = @unserialize(file_get_contents('http://ip-api.com/php/'.$ip));
             if($query && $query['status'] == 'success')
             {
-                $geoloc['country'] = $query['country'];
-                $geoloc['state'] = $query['regionName'];
-                $geoloc['city'] = $query['city'];
-                $geoloc['zip'] = $query['zip'];
+                $geoloc['country'] = strtolower($query['country']);
+                $geoloc['state'] = strtolower($query['regionName']);
+                $geoloc['city'] = strtolower($query['city']);
+                $geoloc['zip'] = strtolower($query['zip']);
             }
         }
-        
+
         return $geoloc;
     }
 
