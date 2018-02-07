@@ -1,0 +1,184 @@
+#!/usr/bin/env php
+<?php
+
+use Faker\Factory;
+use Faker\Generator;
+
+require __DIR__.'/vendor/autoload.php';
+
+const MAX_USERS = 500;
+
+const GENDER_FEMALE = 'female';
+const GENDER_MALE = 'male';
+
+const LOCALE_GENERATOR = 'fr_FR';
+
+/**
+ * The formatUsername function formats given username.
+ *
+ * @param string $usr Username to be formatted
+ *
+ * @return string Formatted username
+ */
+function formatUsername(string $usr): string
+{
+	return str_replace('.', '', $usr);
+}
+
+/**
+ * The generateImage function generates an image specific to the gender
+ * given as argument.
+ *
+ * @param string $gender User gender
+ *
+ * @return string Generated image
+ */
+function generateImage(string $gender): string
+{
+	$index = GENDER_FEMALE === $gender
+		? 1
+		: 2;
+
+	$images = [
+		1 => [
+			'../9d828d636d5e1900.jpg',
+			'../0433ff3c68897ea4.jpg',
+			'../942f1737abf20b24.jpg',
+		],
+		2 => [
+			'../3587660-5489214.jpg',
+			'../25479221584697.jpg',
+			'../c26dbfb9ec270ac249c75cedfc6a1abb.jpg',
+		],
+	];
+
+	return $images[$index][rand(0, 2)];
+}
+
+/**
+ * The formatPassword function formats given password.
+ *
+ * @param string $pwd Password to be formatted
+ *
+ * @return string Formatted password
+ */
+function formatPassword(string $pwd): string
+{
+	return password_hash($pwd, PASSWORD_DEFAULT);
+}
+
+/**
+ * The generateUser function generates random user context.
+ *
+ * @param Generator $generator Generator instance
+ * @param string    $date      Creation date
+ *
+ * @return array User context
+ */
+function generateUser(Generator $generator, string $date): array
+{
+	$gender = rand(1, 2);
+
+	$user = [
+		'first' => $generator->firstName,
+		'last' => $generator->lastName,
+		'usr' => formatUsername($generator->username),
+		'mail' => $generator->email,
+		'pwd' => formatPassword($generator->password),
+		'birth' => ($generator->dateTimeBetween('-60 years', '-18 years'))->format('Y-m-d H:i:s'),
+		'gender' => $gender,
+		'orientation' => rand(1, 3),
+		'bio' => $generator->paragraph,
+		'country' => $generator->country,
+		'state' => '',
+		'city' => $generator->city,
+		'zip' => $generator->postcode,
+		'file1' => generateImage($gender),
+		'file2' => generateImage($gender),
+		'file3' => generateImage($gender),
+		'file4' => '',
+		'file5' => '',
+		'score' => rand(0, 100),
+		'token' => md5(microtime(false)),
+		'tdate' => $date,
+		'active' => rand(0, 1),
+		'created' => $date,
+		'update' => $date,
+	];
+
+	$user['register'] = $user['active']
+		? rand(0, 1)
+		: 0;
+
+	return $user;
+}
+
+/**
+ * The buildUserQuery function builds the MySQL query for creating the user
+ * described by an unique identifier and context data passed as argument.
+ *
+ * The $last boolean parameter gives you the ability to concate queries or
+ * to end the query.
+ *
+ * @param int   $id   User unique identifier
+ * @param array $user User context
+ * @param bool  $last Last query boolean
+ *
+ * @return string User creation query
+ */
+function buildUserQuery(int $id, array $user, bool $last): string {
+	$eol = false === $last
+		? ','
+		: ';';
+
+	return sprintf(
+		'(%d,"%s","%s","%s","%s","%s","%s",%d,%d,"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s",%d,"%s","%s",%d,%d,"%s","%s")%s',
+		$id,
+		$user['first'],
+		$user['last'],
+		$user['usr'],
+		$user['mail'],
+		$user['pwd'],
+		$user['birth'],
+		$user['gender'],
+		$user['orientation'],
+		$user['bio'],
+		$user['country'],
+		$user['state'],
+		$user['city'],
+		$user['zip'],
+		$user['file1'],
+		$user['file2'],
+		$user['file3'],
+		$user['file4'],
+		$user['file5'],
+		$user['score'],
+		$user['token'],
+		$user['tdate'],
+		$user['active'],
+		$user['register'],
+		$user['created'],
+		$user['update'],
+		$eol
+	);
+}
+
+// Truncate table
+$query = 'TRUNCATE `user`;'.PHP_EOL;
+
+// Prepare user creation query
+$query .= 'INSERT INTO `user` VALUES'.PHP_EOL;
+$now = (new DateTime())->format('Y-m-d H:i:s');
+
+// Build n-1 user creation queries
+$lim = MAX_USERS - 1;
+for ($i = 1; $i <= $lim; ++$i) {
+	$generator = Factory::create(LOCALE_GENERATOR);
+	$user = generateUser($generator, $now);
+	$query .= buildUserQuery($i, $user, false);
+}
+
+// Build last user creation query
+$query .= buildUserQuery($i, $user, true);
+
+echo $query.PHP_EOL;
