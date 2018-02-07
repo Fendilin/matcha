@@ -68,8 +68,6 @@ class SignController extends Controller
 
         $d = $req->getParams();
         $token = md5(microtime(TRUE) * 100000);
-        $tokenDate = new \DateTime('now');
-
         if (User::create(
                 $d['first_name'],
                 $d['last_name'],
