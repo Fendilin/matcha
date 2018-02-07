@@ -12,10 +12,10 @@ class AuthMiddleware extends Middleware
     {
         $rout = $req->getAttribute('route');
         $route = $rout->getName();
-        $allow = ['signup', 'signin', 'activation', 'passwordReset', 'resetView', 'resetAction', 'resendConfirm'];
+        $allow = ['signView', 'signup', 'signin', 'activation', 'passwordReset', 'resetView', 'resetAction', 'resendConfirm'];
         if ($rout !== NULL) {
             if (!in_array($route, $allow)) {
-                if ($route !== 'signView' && (!isset($_SESSION['username']) || empty($_SESSION['username']))) {
+                if ((!isset($_SESSION['username']) || empty($_SESSION['username']))) {
                     if (isset($_COOKIE['username']) && !empty($_COOKIE['username'])) {
                         $_SESSION['username'] = $_COOKIE['username'];
                     } else {
@@ -29,15 +29,7 @@ class AuthMiddleware extends Middleware
                     $_SESSION['active'] = $user['active'];
                     $_SESSION['register'] = $user['register'];
                 }
-                if ($route === 'signView') {
-                    if ($_SESSION['active'] == '1' && !empty($_SESSION['username'])) {
-                        if ($_SESSION['register'] == 1) {
-
-                            return $res->withRedirect('/home');
-                        }
-                        return $res->withRedirect('/registration');
-                    }
-                } elseif ($route === 'registerView') {
+                if ($route === 'registerView') {
                     if ($_SESSION['active'] != '1') {
                         $this->container->flash->addMessage('danger', 'Please confirm your email before access this page.');
 
@@ -46,6 +38,22 @@ class AuthMiddleware extends Middleware
                         return $res->withRedirect('/home');
                     }
                 }
+            }
+        }
+        if ($route === 'signView') {
+            if ((!isset($_SESSION['username']) || empty($_SESSION['username']))) {
+                if (isset($_COOKIE['username']) && !empty($_COOKIE['username'])) {
+                    $_SESSION['username'] = $_COOKIE['username'];
+
+                    return $res->withRedirect('/home');
+                }
+            }
+            if ($_SESSION['active'] == '1' && !empty($_SESSION['username'])) {
+                if ($_SESSION['register'] == 1) {
+
+                    return $res->withRedirect('/home');
+                }
+                return $res->withRedirect('/registration');
             }
         }
 
