@@ -83,12 +83,17 @@ class SignController extends Controller
             return $res->withRedirect('/');
         }
 
-        $link =  "<a href='http://".$_SERVER['HTTP_HOST']."/activation/".urlencode($d['username'])."/".urlencode($token)."'>Link</a>";
-
+        $template = file_get_contents(__DIR__."/../../view/email.html.twig");
+        $var = [];
+        $var['link'] = "http://".$_SERVER['HTTP_HOST']."/activation/".urlencode($d['username'])."/".urlencode($token);
+        foreach($var as $key => $value)
+        {
+            $template = str_replace('{{ '.$key.' }}', $value, $template);
+        }
         $message = (new \Swift_Message('Email Confirmation'))
             ->setFrom('admin@matcha.fr')
             ->setTo($d['email'])
-            ->setBody('Follow this ' . $link . ' to confirm your email.');
+            ->setBody($template);
 
         if ($this->mailer->send($message) === 0) {
             $this->flash->addMessage('danger', 'An error occured during email confirmation.');
