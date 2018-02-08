@@ -537,6 +537,13 @@ class User
         return array_values($match);
     }
 
+    public static function birthdateToAge ($date) {
+        $ret = new \DateTime($date);
+        $today = new \DateTime('today');
+
+        return $ret->diff($today)->y;
+    }
+
     public static function homeFilter ($match, $param) {
 
         if ((isset($param['maxAge']) && !empty($param['maxAge'])) || (isset($param['minAge']) && !empty($param['minAge']))) {

@@ -28,51 +28,33 @@ class SearchController extends Controller
     }
 
     public function searchFilter (Request $req, Response $res) {
-        $flash = $this->flash->getMessages();
         $user = User::whereOne('username', '=', $_SESSION['username']);
+        $cat = ['popularity' => 'score', "localisation" => 'zip', 'age' => 'birthdate', 'common_tags' => 'commonTags'];
         $tags = Tag::getAll();
         $param = $req->getParams();
         $match = User::search($param);
         $match = User::delBlockedUser($match, $user['id']);
 
-        $ret['match'] = $match;
-        $str = '';
-
-        foreach ($match as $data) {
-            if (!empty($data)) {
-                $str .= '<div class="col-xs-12 col-md-4 ticket">';
-                $str .= '<div class="row">';
-                $str .=            '<div class="profile-img col-xs-4" style="background: url(\'/img/user/' . $data['file_1'] . '\')"></div>';
-                $str .= '<div class="col-xs-8">';
-                $str .= '<p class="username">' . ucwords($data['username']) . '</p>';
-                $str .= '<p class="age">' . $data['score'] . '</p>';
-                $str .= '<p class="from">' . ucwords($data['country']) . '<br/>' . ucwords($data['city']) . ' ' . ucwords($data['zip']) . '</p>';
-                $str .= '</div>';
-                $str .= '<div class="gender">';
-                if ($data['gender'] == 1) {
-                    $str .= '<img id="gender-img" src="/img/male.png" alt="gender" title="gender"/><br />';
-                } elseif ($data['gender'] == 2) {
-                    $str .= '<img id="gender-img" src="/img/female.png" alt="gender" title="gender"/><br />';
-                }
-                $str .= '</div>';
-                $str .= '<div class="orient">';
-                if (($data['gender'] == 1 && $data['orientation'] == 1) || ($data['gender'] == 2 && $data['orientation'] == 2)) {
-                    $str .= '<img id="orient-img" src="/img/female.png" alt="orientation" title="orientation"/>';
-                } elseif (($data['gender'] == 1 && $data['orientation'] == 2) || ($data['gender'] == 2 && $data['orientation'] == 1)) {
-                    $str .= '<img id="orient-img" src="/img/male.png" alt="orientation" title="orientation"/>';
-                } elseif ($data['orientation'] == 3) {
-                    $str .= '<img id="orient-img" src="/img/male.png" alt="orientation" title="orientation"/>';
-                    $str .= '<img id="orient-img" src="/img/female.png" alt="orientation" title="orientation"/>';
-                }
-                $str .= '</div>';
-                $str .= '<a class="profile-link" href="/profile/' . $data['username'] . '"></a>';
-                $str .= '</div>';
-                $str .= '</div>';
+        $col = NULL;
+        foreach ($cat as $key => $c) {
+            if ($key === $param['orderBy'] ) {
+                $col = $c;
             }
         }
 
-        $ret['content'] = $str;
+        $i = 0;
+        while ($match[$i]) {
+            $match[$i]['age'] = User::birthdateToAge($match[$i]['birthdate']);
+            if ($match[$i][$col] < $match[$i + 1][$col]) {
+                $tmp = $match[$i];
+                $match[$i] = $match[$i + 1];
+                $match[$i + 1] =  $tmp;
+                $i = -1;
+            }
+            ++$i;
+        }
 
-        return json_encode($ret);
+
+        return json_encode($match);
     }
 }
