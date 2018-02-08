@@ -104,5 +104,6 @@ $container['csrf'] = function ($c) {
             return $next($request, $response);
         }
     });
+
     return $guard;
 };

@@ -167,6 +167,10 @@
                 </div>
             </div>
             <div class="form-group">
+                <input id="lat" name="lat" type="hidden" />
+                <input id="lon" name="lon" type="hidden" />
+            </div>
+            <div class="form-group">
                 <input class="form-control btn btn-primary" type="submit" name="submit" value="SignUp"/>
             </div>
             {{ csrf.field | raw }}
@@ -189,5 +193,18 @@
     };
 
     $("#hobby").easyAutocomplete(options);
+
+    getLocation();
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+    }
+
+    function showPosition(position) {
+        $("#lat").val(position.coords.latitude);
+        $("#lon").val(position.coords.longitude);
+    }
 </script>
 </html>

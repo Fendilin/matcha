@@ -2,8 +2,8 @@
 
 namespace App\Model;
 
-use Respect\Validation\Exceptions\FalseValException;
 use Slim\Http\UploadedFile;
+use Geocoder\Query\ReverseQuery;
 
 class User
 {
@@ -17,15 +17,7 @@ class User
     ) {
         $pdo = Pdo::getInstance();
         $date = new \DateTime();
-        $ip = @unserialize(file_get_contents("https://api.ipify.org?format=json"));
-        $query = @unserialize(file_get_contents('http://ip-api.com/php/'.$ip));
-        if($query && $query['status'] == 'success')
-        {
-            $country = $query['country'];
-            $state = $query['regionName'];
-            $city = $query['city'];
-            $zip = $query['zip'];
-        }
+
         $created_at = $date->format('Y-m-d H:i:s');
         $token_date = $date->add(new \DateInterval('PT15M'));
         $password = password_hash($password, PASSWORD_DEFAULT);
@@ -41,10 +33,6 @@ class User
                 'token_date',
                 'active',
                 'register',
-                'country',
-                'state',
-                'city',
-                'zip',
                 'created_at',
                 'updated_at',
             ])
@@ -59,10 +47,6 @@ class User
                 $token_date->format('Y-m-d H:i:s'),
                 0,
                 0,
-                strtolower($country),
-                strtolower($state),
-                strtolower($city),
-                $zip,
                 $created_at,
                 $created_at,
             ]);
@@ -144,6 +128,7 @@ class User
             }
             $i++;
         }
+        $geoloc = self::getGeoloc($d);
         $sql = $pdo->getDb()
             ->update([
                 'register' => 1,
@@ -155,6 +140,10 @@ class User
                 'file_3' => $f['file_3'],
                 'file_4' => $f['file_4'],
                 'file_5' => $f['file_5'],
+                'country' => $geoloc['country'],
+                'state' => $geoloc['state'],
+                'city' => $geoloc['city'],
+                'zip' => $geoloc['zip'],
                 'birthdate' => $date->format('Y-m-d'),
                 'updated_at' => $updated_at,
             ])
@@ -165,6 +154,33 @@ class User
         User::updatePopularity($username);
 
         return $sql->execute();
+    }
+
+    public static function getGeoloc ($params) {
+        $geoloc = [];
+        if (isset($params['lat']) && !empty($params['lat']) && isset($params['lon']) && !empty($params['lon'])) {
+            $httpClient = new \Http\Adapter\Guzzle6\Client();
+            $provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient);
+            $geocoder = new \Geocoder\StatefulGeocoder($provider, 'fr');
+            $result = $geocoder->reverseQuery(ReverseQuery::fromCoordinates($params['lat'],$params['lon']));
+            $geoloc['country'] = strtolower($result->get(1)->getCountry());
+            $geoloc['state'] = strtolower($result->get(1)->getAdminLevels()->get(1)->getName());
+            $geoloc['city'] = strtolower($result->get(1)->getLocality());
+            $geoloc['zip'] = strtolower($result->get(1)->getPostalCode());
+
+        } else {
+            $ip = file_get_contents('https://api.ipify.org');
+            $query = @unserialize(file_get_contents('http://ip-api.com/php/'.$ip));
+            if($query && $query['status'] == 'success')
+            {
+                $geoloc['country'] = strtolower($query['country']);
+                $geoloc['state'] = strtolower($query['regionName']);
+                $geoloc['city'] = strtolower($query['city']);
+                $geoloc['zip'] = strtolower($query['zip']);
+            }
+        }
+
+        return $geoloc;
     }
 
     public static function updateProfile ($username, $files)
