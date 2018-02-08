@@ -1,9 +1,3 @@
-vendor/*
-.idea/
-public/cache/
-public/img/user/*.jpg
-public/img/user/*.png
-public/img/user/*.jpeg
-public/img/user/*.gif
-
-
+/vendor/
+/public/cache/
+/public/img/user/*[jpg,jpeg,png,gif]

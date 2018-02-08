@@ -151,12 +151,6 @@ class SignController extends Controller
 
         if (User::checkActivation($d['username'], $d['token']) === false || User::activate($d['username']) === false)
         {
-            if (User::checkActivation($d['username'], $d['token']) === false) {
-                echo "fail";
-            } elseif (User::activate($d['username']) === false) {
-                echo "fail2";
-            }
-            die;
             $this->container->flash->addMessage('danger', 'An Error occured during Account Activation.');
             return $res->withRedirect('/');
         }

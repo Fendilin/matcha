@@ -35,6 +35,10 @@ h5
     background: #FAFAFA;
 }
 
+#img-form label {
+    width: 100%!important;
+}
+
 #gender-img, #orient-img
 {
     height: 20px;
