@@ -112,11 +112,27 @@
         <script src="{{ base_url() }}/js/layout.js"></script>
         <script src="{{ base_url() }}/js/stillalive.js"></script>
         <script src="{{ base_url() }}/js/chat.js"></script>
+        <script id="chat-ticket-template" type="text/template">
+            <div class="chat-ticket">
+                <span class="chat-ticket-img" style="background: url('{{ base_url() }}/img/user/{ file_1 }') center"></span>
+                <span class="ticket-username">{ username }</span>
+                <span class="new-message"></span>
+                <img class="connect-img" src="{{ base_url() }}/img/{ img }" alt="" title="" />
+                </div>
+        </script>
+        <script id="notif-template" type="text/template">
+            <div class="row col-md-12 notif-ticket { color }">
+                <div class="hidden">{ id }</div>
+                <div class="col-md-2 notif-img" style="background: url('{{ base_url() }}/img/user/{ img }')"></div>
+                <div class="col-md-7 notif-content">{ content }</div>
+                <div class="col-md-3 notif-date">{ date }</div>
+            </div>
+        </script>
         <script>
             $(document).ready(function () {
-                stillConnect({{ connectedWith|json_encode|raw }}, {{ base_url() }});
+                stillConnect();
                 newMessage({{ connectedWith|json_encode|raw }});
-                getNotif("{{ head_name|lower|raw }}");
+                getNotif();
             });
         </script>
     {% endblock %}

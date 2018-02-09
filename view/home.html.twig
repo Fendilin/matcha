@@ -164,6 +164,7 @@
                 var template;
                 var orient;
                 $.each(JSON.parse(data), function (k, v) {
+                    template = $('#ticket-template').html().toString();
                     if ((v.orientation === 1 && v.gender === 1) || (v.orientation === 2 && v.gender === 2) ) {
                         orient = "female.png";
                     } else if ((v.orientation === 2 && v.gender === 1) || (v.orientation === 1 && v.gender === 2)) {
@@ -171,7 +172,7 @@
                     } else {
                         orient = "bi.png";
                     }
-                    template = $('#ticket-template').html().toString();
+
                     template = template.replace(/{ file_1 }/g, v.file_1);
                     template = template.replace(/{ username }/g, v.username);
                     template = template.replace(/{ age }/g, v.age);

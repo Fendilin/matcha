@@ -2,7 +2,10 @@ var user;
 var lastMessage = [];
 var totalUnread;
 
+clickChatTicket();
+
 $(".chat-ticket").click(function () {
+    console.log('hello');
     $("#chatModal").modal('show');
     user = $(this).find('.ticket-username').html();
     $("#chatModal .modal-title").html(user);
@@ -31,6 +34,16 @@ $("#chat-input").click( function (e) {
     $("#conv").scrollTop($("#conv").prop("scrollHeight"));
 });
 
+function clickChatTicket () {
+    $(".chat-ticket").click(function () {
+        $("#chatModal").modal('show');
+        user = $(this).find('.ticket-username').html();
+        $("#chatModal .modal-title").html(user);
+        getMessage(user);
+        $("#chat-input").click();
+    });
+}
+
 function getMessage (user) {
     $.get("/getMessages", {user: user}, function (data) {
         $("#conv").empty();
@@ -39,30 +52,29 @@ function getMessage (user) {
     });
 }
 
-function stillConnect (connectedWith, base_url) {
-    if (base_url === undefined)
-    {
-        base_url = '';
-    }
-    $.get("/stillConnected", {data : connectedWith }, function (data) {
-        $(".chat-ticket").each(function (index) {
-            if (data[index] === 0) {
-                $(this).find('.connect-img').attr('src', base_url + '/img/disconnected.png');
-            } else if (data[index] === 1) {
-                $(this).find('.connect-img').attr('src', base_url + '/img/connected.png');
-            }
+function getConnected () {
+    var template;
+    $.get("/stillConnected", function (data) {
+        $('.chat-ticket-wrap').empty();
+        data = JSON.parse(data);
+        $.each(data, function (k, v) {
+            var img = (v.connected === 1) ? "connected.png" : "disconnected.png";
+            template = $('#chat-ticket-template').html().toString();
+            template = template.replace(/{ file_1 }/g, v.file_1);
+            template = template.replace(/{ username }/g, v.username);
+            template = template.replace(/{ img }/g, img);
+            $('.chat-ticket-wrap').append(template);
         });
+        clickChatTicket();
     });
+}
+
+function stillConnect () {
+    getConnected();
+    clickChatTicket ();
     setInterval(function () {
-        $.get("/stillConnected", {data : connectedWith }, function (data) {
-            $(".chat-ticket").each(function (index) {
-                if (data[index] === 0) {
-                    $(this).find('.connect-img').attr('src', base_url + '/img/disconnected.png');
-                } else if (data[index] === 1) {
-                    $(this).find('.connect-img').attr('src', base_url + '/img/connected.png');
-                }
-            });
-        });
+        getConnected();
+        clickChatTicket ();
     }, 5000);
 }
 
