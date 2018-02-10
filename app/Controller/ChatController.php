@@ -58,10 +58,10 @@ class ChatController extends Controller
     }
 
     public function newMessagesAction (Request $req, Response $res) {
-        $param = $req->getParams();
         $ret = [];
         $i = 0;
-        foreach ($param['data'] as $user) {
+        $data = Chat::getAllConnection();
+        foreach ($data as $user) {
             $ret[$i] = Chat::countUnreadMessages($user);
             $i++;
         }

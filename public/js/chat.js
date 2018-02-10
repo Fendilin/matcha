@@ -5,7 +5,6 @@ var totalUnread;
 clickChatTicket();
 
 $(".chat-ticket").click(function () {
-    console.log('hello');
     $("#chatModal").modal('show');
     user = $(this).find('.ticket-username').html();
     $("#chatModal .modal-title").html(user);
@@ -63,6 +62,13 @@ function getConnected () {
             template = template.replace(/{ file_1 }/g, v.file_1);
             template = template.replace(/{ username }/g, v.username);
             template = template.replace(/{ img }/g, img);
+            if (v.nbrMess > 0) {
+                template = template.replace(/{ nbrMess }/g, v.nbrMess);
+                template = template.replace(/{ show }/g , "show");
+            } else {
+                template = template.replace(/{ nbrMess }/g, '0');
+                template = template.replace(/{ show }/g , "hide");
+            }
             $('.chat-ticket-wrap').append(template);
         });
         clickChatTicket();
@@ -78,14 +84,41 @@ function stillConnect () {
     }, 5000);
 }
 
-function newMessage (connectedWith) {
-    $.get("/newMessages", {data : connectedWith }, function (data) {
+function getNewMessage () {
+    $.get("/newMessages", function (data) {
         totalUnread = 0;
         $(".chat-ticket").each(function (index) {
             if (data[index] === 0) {
-                $(this).find(".new-message").css("opacity", "0");
+                // $(this).find(".new-message").css("opacity", "0");
             } else {
-                $(this).find(".new-message").css("opacity", "1");
+                // $(this).find(".new-message").css("opacity", "1");
+                if ($(this).find(".ticket-username").html() === $("#chat-modal-title").html()) {
+                    $("#conv").scrollTop($("#conv").prop("scrollHeight"));
+                }
+                totalUnread += data[index];
+            }
+            lastMessage[index] = data[index];
+            $(this).find(".new-message").html(data[index]);
+        });
+        $.get("/countNotif", function (data) {
+            totalUnread += parseInt(data);
+            $("#notif-count").html(data);
+            $("#notif-count").css('opacity', (parseInt(data) === 0) ? '0' : '1');
+            $("#icon-new-message").html(totalUnread);
+            if (totalUnread > 0 && $("#burger-wrap").not('open-burger')) {
+                $("#icon-new-message").css("opacity", ($("#burger-wrap").hasClass('open-burger')) ? "0" : "1");
+            } else if (totalUnread === 0) {
+                $("#icon-new-message").css("opacity", "0");
+            }
+        });
+    }, "json");
+}
+
+function newMessage () {
+    $.get("/newMessages", function (data) {
+        totalUnread = 0;
+        $(".chat-ticket").each(function (index) {
+            if (data[index] !== 0) {
                 if ($(this).find(".ticket-username").html() === $("#chat-modal-title").html()) {
                     $("#conv").scrollTop($("#conv").prop("scrollHeight"));
                 }
@@ -107,13 +140,10 @@ function newMessage (connectedWith) {
         });
     }, "json");
     setInterval(function () {
-        $.get("/newMessages", {data : connectedWith }, function (data) {
+        $.get("/newMessages", function (data) {
             totalUnread = 0;
             $(".chat-ticket").each(function (index) {
-                if (data[index] === 0) {
-                    $(this).find(".new-message").css("opacity", "0");
-                } else {
-                    $(this).find(".new-message").css("opacity", "1");
+                if (data[index] !== 0) {
                     if ($(this).find(".ticket-username").html() === $("#chat-modal-title").html()
                         && (lastMessage[index] < data[index] || lastMessage[index] === undefined)) {
                         getMessage(user);

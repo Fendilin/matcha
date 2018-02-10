@@ -61,7 +61,7 @@ function renderNotif () {
                 $.get('/readNotif', {id: $(this).find(".hidden").html()});
             });
             $(".notif-ticket").mouseout( function () {
-                getNotif(user);
+                renderNotif();
             });
         }
     });

@@ -21,6 +21,7 @@ class GeneralController extends Controller
         $data = Chat::getAllConnection();
         foreach ($data as $k => $v) {
             $data[$k]['connected'] = Connected::connected($v['username']);
+            $data[$k]['nbrMess'] = Chat::countUnreadMessages($v);
         }
 
         return json_encode($data);

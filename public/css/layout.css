@@ -243,3 +243,12 @@ body
     color: #EFEFEF;
     text-decoration: none;
 }
+
+.show {
+    opacity: 1;
+    display: inline-block!important;
+}
+
+.hide {
+    opacity: 0;
+}

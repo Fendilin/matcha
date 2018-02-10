@@ -130,6 +130,7 @@
 {% block js %}
     {{ parent() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    <script src="{{ base_url() }}/js/search.js"></script>
     <script id="ticket-template" type="text/template">
         <div class="col-xs-12 col-md-4 ticket">
             <div class="row">
@@ -143,55 +144,10 @@
                     <img id="gender-img" src="{{ base_url() }}/img/{ gender }" alt="gender" title="gender"/><br />
                 </div>
                 <div class="orient">
-                    <img id="orient-img" src="{{ base_url() }}/img/{ orient }" alt="orientation" title="orientation"/>
+                    <img id="orient-img" class="{ col-md }" src="{{ base_url() }}/img/{ orient }" alt="orientation" title="orientation"/>
                 </div>
                 <a class="profile-link" href="{{ base_url() }}/profile/{ username }"></a>
             </div>
         </div>
-    </script>
-    <script>
-        function searchResult () {
-            $.get("/searchFilter", {
-                minAge: $("#minAge").val(),
-                maxAge: $("#maxAge").val(),
-                minScore: $("#minScore").val(),
-                maxScore: $("#maxScore").val(),
-                location: $("#location").val(),
-                tags: $("#tags").val(),
-                orderBy: $("#sortBy").val().toLowerCase().replace(/ /g,"_")
-            }, function (data) {
-                $("#match-container").empty();
-                var template;
-                var orient;
-                $.each(JSON.parse(data), function (k, v) {
-                    if ((v.orientation === 1 && v.gender === 1) || (v.orientation === 2 && v.gender === 2) ) {
-                        orient = "female.png";
-                    } else if ((v.orientation === 2 && v.gender === 1) || (v.orientation === 1 && v.gender === 2)) {
-                        orient = "male.png";
-                    } else {
-                        orient = "bi.png";
-                    }
-                    template = $('#ticket-template').html().toString();
-                    template = template.replace(/{ file_1 }/g, v.file_1);
-                    template = template.replace(/{ username }/g, v.username);
-                    template = template.replace(/{ age }/g, v.age);
-                    template = template.replace(/{ from }/g, v.country + " " + v.state + "<br />" + v.city + " " + v.zip);
-                    template = template.replace(/{ gender }/g, (v.gender === 1) ? "male.png" : "female.png");
-                    template = template.replace(/{ orient }/g, orient);
-                    $('#match-container').append(template);
-                });
-            });
-        }
-
-        $('#sortBy').change(function () {
-            searchResult();
-        });
-
-        $('.searchInput').change(function () {
-            searchResult();
-        });
-        $('#location').keyup(function (e) {
-            searchResult();
-        });
     </script>
 {% endblock %}

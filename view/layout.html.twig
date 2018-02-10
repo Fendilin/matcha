@@ -116,7 +116,7 @@
             <div class="chat-ticket">
                 <span class="chat-ticket-img" style="background: url('{{ base_url() }}/img/user/{ file_1 }') center"></span>
                 <span class="ticket-username">{ username }</span>
-                <span class="new-message"></span>
+                <span class="new-message { show }">{ nbrMess }</span>
                 <img class="connect-img" src="{{ base_url() }}/img/{ img }" alt="" title="" />
                 </div>
         </script>
@@ -131,7 +131,7 @@
         <script>
             $(document).ready(function () {
                 stillConnect();
-                newMessage({{ connectedWith|json_encode|raw }});
+                newMessage();
                 getNotif();
             });
         </script>
