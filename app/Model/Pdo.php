@@ -8,12 +8,12 @@ class Pdo
 {
     private static $_instance;
     private $db;
-    private $db_host = 'localhost';
+    private $db_host = 'mysql';
     private $db_name = 'matcha';
     private $usr = 'root';
     private $pwd = '';
 
-    private function __construct()
+    public function __construct()
     {
         $dsn = 'mysql:host='.$this->db_host.';dbname='.$this->db_name.';charset=utf8';
         $this->db = new Database($dsn, $this->usr, $this->pwd);
