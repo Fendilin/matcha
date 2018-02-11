@@ -544,7 +544,7 @@ class User
 
         foreach ($match as $key => $m)
         {
-            if (in_array($m['id'], $blocked))
+            if (in_array($m['id'], $blocked) || $m['active'] === 0 || $m['register'] === 0)
             {
                 unset($match[$key]);
             }
