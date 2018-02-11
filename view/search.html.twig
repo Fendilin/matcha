@@ -84,7 +84,7 @@
     <div class="row">
         <div class="form-group col-xs-3">
             <strong>Sort by: </strong>
-            <select class="sortBy form-control">
+            <select id="sortBy" class="form-control">
                 <option class="text-muted">-- Sort by</option>
                 <option>Popularity</option>
                 <option>Localisation</option>
@@ -130,62 +130,24 @@
 {% block js %}
     {{ parent() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-    <script>
-        var match = {{ match|json_encode|raw }};
-        $('.sortBy').change(function () {
-            if ($(this).val() === "Popularity") {
-                $.get("/sort-by", {data : match, orderBy: 'popularity' }, function (data) {
-                    $("#match-container").empty();
-                    $("#match-container").html(data);
-                });
-            } else if ($(this).val() === "Localisation") {
-                $.get("/sort-by", {data : match, orderBy: 'location' }, function (data) {
-                    $("#match-container").empty();
-                    $("#match-container").html(data);
-                });
-            } else if ($(this).val() === "Age") {
-                $.get("/sort-by", {data : match, orderBy: 'age' }, function (data) {
-                    $("#match-container").empty();
-                    $("#match-container").html(data);
-                });
-            } else if ($(this).val() === "Commun tags") {
-                $.get("/sort-by", {data : match, orderBy: 'tags' }, function (data) {
-                    $("#match-container").empty();
-                    $("#match-container").html(data);
-                });
-            }
-        });
-
-        $('.searchInput').change(function () {
-            $.get("/searchFilter", {
-                minAge: $("#minAge").val(),
-                maxAge: $("#maxAge").val(),
-                minScore: $("#minScore").val(),
-                maxScore: $("#maxScore").val(),
-                location: $("#location").val(),
-                tags: $("#tags").val()
-            }, function(data) {
-                data = JSON.parse(data);
-                $("#match-container").empty();
-                $("#match-container").html(data.content);
-                match = data.match;
-            });
-        });
-
-        $('#location').keyup(function (e) {
-            $.get("/searchFilter", {
-                minAge: $("#minAge").val(),
-                maxAge: $("#maxAge").val(),
-                minScore: $("#minScore").val(),
-                maxScore: $("#maxScore").val(),
-                location: $("#location").val(),
-                tags: $("#tags").val()
-            }, function(data) {
-                data = JSON.parse(data);
-                $("#match-container").empty();
-                $("#match-container").html(data.content);
-                match = data.match;
-            });
-        });
+    <script src="{{ base_url() }}/js/search.js"></script>
+    <script id="ticket-template" type="text/template">
+        <div class="col-xs-12 col-md-4 ticket">
+            <div class="row">
+                <div class="profile-img col-xs-4" style="background: url('{{ base_url }}/img/user/{ file_1 }"></div>
+                <div class="col-xs-8">
+                    <p class="username">{ username }</p>
+                    <p class="age">{ age }</p>
+                    <p class="from">{ from }</p>
+                </div>
+                <div class="gender">
+                    <img id="gender-img" src="{{ base_url() }}/img/{ gender }" alt="gender" title="gender"/><br />
+                </div>
+                <div class="orient">
+                    <img id="orient-img" class="{ col-md }" src="{{ base_url() }}/img/{ orient }" alt="orientation" title="orientation"/>
+                </div>
+                <a class="profile-link" href="{{ base_url() }}/profile/{ username }"></a>
+            </div>
+        </div>
     </script>
 {% endblock %}

@@ -76,3 +76,8 @@
     font-weight: bolder;
 
 }
+
+.large
+{
+    width: 50px!important;
+}

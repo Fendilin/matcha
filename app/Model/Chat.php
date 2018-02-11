@@ -50,4 +50,44 @@ class Chat
 
         return $stmt->execute();
     }
+
+    public static function getAllConnection () {
+        $pdo = Pdo::getInstance();
+        $user = User::whereOne('username', '=', $_SESSION['username']);
+        $sql = $pdo->getDb()->select()->from('likes')->where('liked_id', '=', $user['id'])->orWhere('like_id', '=', $user['id']);
+        $exec = $sql->execute();
+        $data = $exec->fetchAll();
+
+        $connectedWith = [];
+        $connectedTo = [];
+        foreach ($data as $d) {
+            if ($user['id'] === $d['like_id']) {
+                array_push($connectedTo, $d['liked_id']);
+            } elseif ($user['id'] === $d['liked_id']) {
+                array_push($connectedWith, $d['like_id']);
+            }
+        }
+        $connected = [];
+        foreach ($connectedWith as $c) {
+            if (in_array($c, $connectedTo)) {
+                array_push($connected, $c);
+            }
+        }
+        if (empty($connected)) {
+            return $data = '';
+        }
+        $sql = $pdo->getDb()->select()->from('user')->whereIn('id', $connected);
+        $exec = $sql->execute();
+        $data = $exec->fetchAll();
+        return $data;
+        $i = 0;
+        if (!empty($data)) {
+            while ($data[$i]) {
+                $data[$i]['online'] = Connected::connected($data[$i]['username']);
+                $i++;
+            }
+        }
+
+        return $data;
+    }
 }

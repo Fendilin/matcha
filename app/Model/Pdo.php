@@ -22,7 +22,7 @@ class Pdo
     public static function getInstance()
     {
         if (is_null(self::$_instance)) {
-            return new Pdo();
+            self::$_instance = new Pdo();
         }
         return self::$_instance;
     }
