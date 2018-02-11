@@ -137,8 +137,7 @@ class SignController extends Controller
         $_SESSION['register'] = 1;
         $_SESSION['username'] = $d['sign_username'];
         if ($d['remember'] == 'on') {
-            $_COOKIE['username'] = $_SESSION['username'];
-            setcookie('username', $_SESSION['username'], time() + (60*60*24) * 10);
+            setcookie('username', $_SESSION['username'], time() + (60*60*24) * 10, null, null, false, true);
         }
 
         return $res->withRedirect('/home');
