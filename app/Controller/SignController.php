@@ -175,7 +175,7 @@ class SignController extends Controller
         $v->setInput('bio')->notEmpty();
         $v->setInput('tag')->notEmpty();
 
-        if ($v->failed()) {
+        if ($v->failed() || !User::legalAge($req->getParams(), $this)) {
             return $res->withRedirect('/registration');
         }
 
