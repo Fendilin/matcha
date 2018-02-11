@@ -152,6 +152,7 @@ h5
     border-left: 1px solid #028bff;
     font-weight: bolder;
     cursor: pointer;
+    z-index: 1000;
 }
 
 #bio-text
