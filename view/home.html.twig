@@ -104,7 +104,7 @@
                         <div class="col-xs-8">
                             <p class="username">{{ m.username | ucwords }}</p>
                             <p class="age">{{ m.birthdate | age }}</p>
-                            <p class="from">{{ m.country | ucwords }} <br/>{{ m.city | ucwords}} {{ m.zip | ucwords }}</p>
+                            <p class="from">{{ m.country | ucwords|slice(0,30) }} <br/>{{ m.city | ucwords}} {{ m.zip | ucwords }}</p>
                         </div>
                         <div class="gender">
                             <img id="gender-img" src="{{ base_url() }}/img/{% if m.gender == 1 %}male.png{% elseif m.gender == 2%}female.png{% endif %}" alt="gender" title="gender"/><br />
