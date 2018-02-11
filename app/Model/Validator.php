@@ -47,7 +47,7 @@ class Validator
     }
 
     public function alpha () {
-        if (preg_match('/^[A-z \-]+$/', $this->p[$this->inputName]) === 0) {
+        if (preg_match('/^[A-Za-zàâçéèêëîïôûùüÿñæœ .-]+$/', $this->p[$this->inputName]) === 0) {
             $this->flash->addMessage($this->inputName, ucfirst(str_replace("_", " ", $this->inputName)) . " must be alphabetic only");
             $this->error[$this->inputName] = 1;
         }
