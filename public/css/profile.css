@@ -139,6 +139,8 @@ h5
     border-radius: 2px;
     color: #FFF;
     margin : 5px 5px 0 5px;
+    position: relative;
+    z-index: 1000;
 }
 
 .tag_wrap span
@@ -152,6 +154,7 @@ h5
     border-left: 1px solid #028bff;
     font-weight: bolder;
     cursor: pointer;
+    color: #FFF!important;
 }
 
 #bio-text
