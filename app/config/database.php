@@ -1,9 +1,15 @@
 <?php
 
+require_once __DIR__.'/../../vendor/autoload.php';
+
+use \App\Model\Pdo;
+
 $sql = file_get_contents(__DIR__.'/schema.sql');
 try {
-    $pdo = \App\Model\Pdo::getInstance()->getDb();
-    $exec = $pdo->prepare("CREATE DATABASE `$db_name`;USE `$db_name`;".$sql);
+    $db_name = 'matcha';
+    $pdo = Pdo::getInstance()->getDb();
+//    echo "CREATE DATABASE ".$db_name.";USE `".$db_name."`;".$sql;
+    $exec = $pdo->prepare("CREATE DATABASE ".$db_name.";USE '".$db_name."';");
     $exec->execute();
 
 } catch (PDOException $e) {

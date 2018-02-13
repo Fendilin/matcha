@@ -8,7 +8,7 @@ class Pdo
 {
     private static $_instance;
     private $db;
-    private $db_host = 'mysql';
+    private $db_host = 'localhost';
     private $db_name = 'matcha';
     private $usr = 'root';
     private $pwd = '';
