@@ -55,7 +55,7 @@ function getConnected () {
     var template;
     $.get("/stillConnected", function (data) {
         $('.chat-ticket-wrap').empty();
-        data = JSON.parse(data);
+//        data = JSON.parse(data);
         $.each(data, function (k, v) {
             var img = (v.connected === 1) ? "connected.png" : "disconnected.png";
             template = $('#chat-ticket-template').html().toString();

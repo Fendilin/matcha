@@ -24,7 +24,7 @@ class GeneralController extends Controller
             $data[$k]['nbrMess'] = Chat::countUnreadMessages($v);
         }
 
-        return json_encode($data);
+        return $res->withJson($data);
     }
 
     public static function getNotifAction (Request $req, Response $res) {
