@@ -1,4 +1,4 @@
-.PHONY: all build install run logs test stop clean re
+.PHONY: all build install fixtures run logs test stop clean re
 
 all:
 
@@ -7,6 +7,9 @@ build:
 
 install: run
 	docker-compose exec php composer install
+
+fixtures: install
+	docker-compose run mysql matcha < docker/mysql/fixtures.sql
 
 run:
 	chmod 777 public/img/user
