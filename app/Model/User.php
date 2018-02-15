@@ -164,10 +164,10 @@ class User
             $apiKey = 'AIzaSyDki460XK-pPNE8aYkKlHCbUFveSLPjFZw';
             $geocoder = new \Geocoder\StatefulGeocoder($provider, 'fr', $apiKey);
             $result = $geocoder->reverseQuery(ReverseQuery::fromCoordinates($params['lat'],$params['lon']));
-            $geoloc['country'] = strtolower($result->get(1)->getCountry());
-            $geoloc['state'] = strtolower($result->get(1)->getAdminLevels()->get(1)->getName());
-            $geoloc['city'] = strtolower($result->get(1)->getLocality());
-            $geoloc['zip'] = strtolower($result->get(1)->getPostalCode());
+            $geoloc['country'] = strtolower($result->get(0)->getCountry());
+            $geoloc['state'] = strtolower($result->get(0)->getAdminLevels()->get(1)->getName());
+            $geoloc['city'] = strtolower($result->get(0)->getLocality());
+            $geoloc['zip'] = strtolower($result->get(0)->getPostalCode());
 
         } else {
             $ip = file_get_contents('https://api.ipify.org');
