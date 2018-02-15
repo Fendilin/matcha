@@ -122,7 +122,7 @@ class ProfileController extends Controller
         $v->setInput('city')->notEmpty();
         $v->setInput('zip')->notEmpty()->num();
 
-        if ($v->failed()) {
+        if ($v->failed() || !User::legalAge($req->getParams(), $this)) {
             return $res->withRedirect($_SERVER['HTTP_REFERER']);
         }
         User::updateInfo($arg['username'], $req->getParams());

@@ -6,7 +6,7 @@ $(document).ready( function () {
         return key != 13;
     });
 
-    $("body").on("click", ".tag_wrap a", function() {
+    $(".tag_wrap a").click(function() {
         $(this).parent().remove();
         setInputValue();
     });
@@ -74,7 +74,8 @@ $(document).ready( function () {
                 $('#tag-ticket-wrap').html($('#tag-ticket-wrap').html() + '<span class="tag_wrap" contenteditable="false"><span>' + value.toLowerCase() + '</span><a>x</a></span>');
             }
         });
-        $("body").on("click", ".tag_wrap a", function() {
+      
+        $(".tag_wrap a").click(function() {
             $(this).parent().remove();
             setInputValue();
         });

@@ -519,6 +519,17 @@ class User
         return $ret;
     }
 
+    public static function legalAge ($params, $c) {
+        $birth = new \DateTime($params['year'] . '-' . $params['month'] . '-' . $params['day']);
+        if (self::birthdateToAge($birth->format("Y-m-d H:i:s")) < 18) {
+            $c->flash->addMessage('birthdate', 'Must be at leat 18');
+
+            return false;
+        }
+
+        return true;
+    }
+
     public static function getBaseUrl()
     {
         $hostName = $_SERVER['HTTP_HOST'];

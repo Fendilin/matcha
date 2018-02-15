@@ -56,6 +56,7 @@
                                 {% endfor %}
                             </select>
                             {% if flash.day %}<small class="text-danger">{{ flash.day | first }}</small>{% endif %}
+                            {% if flash.birthdate %}<small class="text-danger">{{ flash.birthdate | first}}</small>{% endif %}
                         </div>
                         <div class="birth-wrap">
                             <select name="month" class="form-control">
