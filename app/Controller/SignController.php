@@ -81,7 +81,7 @@ class SignController extends Controller
             return $res->withRedirect('/');
         }
 
-        $link =  "<a href='http://".$_SERVER['HTTP_HOST']."/activation/".urlencode($d['username'])."/".urlencode($token)."'>Link</a>";
+        $link =  "<a href='https://".$_SERVER['HTTP_HOST']."/activation/".urlencode($d['username'])."/".urlencode($token)."'>Link</a>";
 
         $message = (new \Swift_Message('Email Confirmation'))
             ->setFrom('admin@matcha.fr')
@@ -225,7 +225,7 @@ class SignController extends Controller
                 ->where('username', '=', $d['username']);
             $sql->execute();
 
-            $link = "<a href='http://" . $_SERVER['HTTP_HOST'] . "/password-reset/" . urlencode($d['username']) . "/" . urlencode($token) . "'>Link</a>";
+            $link = "<a href='https://" . $_SERVER['HTTP_HOST'] . "/password-reset/" . urlencode($d['username']) . "/" . urlencode($token) . "'>Link</a>";
 
             $message = (new \Swift_Message('Password reset'))
                 ->setFrom('admin@matcha.fr')
@@ -305,7 +305,7 @@ class SignController extends Controller
                 ->where('username', '=', $d['username']);
             $sql->execute();
 
-            $link =  "<a href='http://".$_SERVER['HTTP_HOST']."/activation/".urlencode($d['username'])."/".urlencode($token)."'>Link</a>";
+            $link =  "<a href='https://".$_SERVER['HTTP_HOST']."/activation/".urlencode($d['username'])."/".urlencode($token)."'>Link</a>";
 
             $message = (new \Swift_Message('Email Confirmation'))
                 ->setFrom('admin@matcha.fr')
