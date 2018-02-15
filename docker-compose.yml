@@ -15,7 +15,7 @@ nginx:
     links:
         - php
     ports:
-        - 8080:80
+        - 8080:443
     volumes:
         - .:/var/www/html
 
