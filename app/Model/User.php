@@ -161,7 +161,8 @@ class User
         if (isset($params['lat']) && !empty($params['lat']) && isset($params['lon']) && !empty($params['lon'])) {
             $httpClient = new \Http\Adapter\Guzzle6\Client();
             $provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient);
-            $geocoder = new \Geocoder\StatefulGeocoder($provider, 'fr');
+            $apiKey = 'AIzaSyDki460XK-pPNE8aYkKlHCbUFveSLPjFZw';
+            $geocoder = new \Geocoder\StatefulGeocoder($provider, 'fr', $apiKey);
             $result = $geocoder->reverseQuery(ReverseQuery::fromCoordinates($params['lat'],$params['lon']));
             $geoloc['country'] = strtolower($result->get(1)->getCountry());
             $geoloc['state'] = strtolower($result->get(1)->getAdminLevels()->get(1)->getName());

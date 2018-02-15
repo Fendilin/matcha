@@ -81,3 +81,9 @@
 {
     width: 50px!important;
 }
+
+.from, .age, .username {
+    white-space: nowrap!important;
+    overflow: hidden!important;
+    max-width: 75%!important;
+}

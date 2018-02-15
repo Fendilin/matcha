@@ -14,6 +14,12 @@
     margin: 0;
 }
 
+.from, .age, .username {
+    white-space: nowrap!important;
+    overflow: hidden!important;
+    max-width: 75%!important;
+}
+
 .profile-img
 {
     background-position: center center!important;
@@ -77,7 +83,7 @@
 
 }
 
-.large img{
+.large{
     height: 25px;
     width: 50px!important;
 }
