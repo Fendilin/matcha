@@ -32,12 +32,16 @@ $(document).ready( function () {
     function setTagWrap ()
     {
         var content = $('#tag').val();
-        console.log(content);
         content = content.split(',');
+        $("#tag-ticket-wrap").empty();
         jQuery.each(content, function (index, value) {
             if (value.length !== 0) {
                 $('#tag-ticket-wrap').html($('#tag-ticket-wrap').html() + '<span class="tag_wrap" contenteditable="false"><span>' + value.toLowerCase() + '</span><a>x</a></span>');
             }
+        });
+        $("body").on("click", ".tag_wrap a", function() {
+            $(this).parent().remove();
+            setInputValue();
         });
     }
 
@@ -70,6 +74,7 @@ $(document).ready( function () {
                 $('#tag-ticket-wrap').html($('#tag-ticket-wrap').html() + '<span class="tag_wrap" contenteditable="false"><span>' + value.toLowerCase() + '</span><a>x</a></span>');
             }
         });
+      
         $(".tag_wrap a").click(function() {
             $(this).parent().remove();
             setInputValue();
