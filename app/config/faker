@@ -92,14 +92,22 @@ function generateTags($id) {
 function generateConnected($id, $f) {
 
     $sql = 'INSERT INTO connected (user_id, connect_date) VALUES ("'.$id.'","'.($f->dateTimeBetween('-1 year', 'now'))->format('Y-m-d H:i:s').'");';
+
+    return $sql;
 }
 
 function generateLikes($id, $f) {
     $maxLikes = rand(1, MAX_LIKES);
     $ret = '';
     for($i=1;$i <= $maxLikes; $i++) {
-        $likedId = rand(1,500);
-        $sql = 'INSERT INTO likes (like_id, liked_id, like_date) VALUES ("'.$id.'","'.$likedId.'","'.($f->dateTimeBetween('-1 year', 'now'))->format('Y-m-d H:i:s').'");';
+        $likerId = rand(1,500);
+        $sql = 'INSERT INTO likes (like_id, liked_id, like_date) VALUES ("'.$likerId.'","'.$id.'","'.($f->dateTimeBetween('-1 year', 'now'))->format('Y-m-d H:i:s').'");';
+        $ret .= $sql.PHP_EOL;
+    }
+    $maxView = rand($maxLikes, MAX_LIKES * 2);
+    for($i; $i <= $maxView; $i++) {
+        $viewerId = rand(1, 500);
+        $sql = 'INSERT INTO views (viewer_id, viewed_id, view_date) VALUES ("'.$viewerId.'","'.$id.'","'.($f->dateTimeBetween('-1 year', 'now'))->format('Y-m-d H:i:s').'");';
         $ret .= $sql.PHP_EOL;
     }
 

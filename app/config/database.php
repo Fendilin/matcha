@@ -8,7 +8,6 @@ $sql = file_get_contents(__DIR__.'/schema.sql');
 try {
     $db_name = 'matcha';
     $pdo = Pdo::getInstance()->getDb();
-//    echo "CREATE DATABASE ".$db_name.";USE `".$db_name."`;".$sql;
     $exec = $pdo->prepare("CREATE DATABASE ".$db_name.";USE '".$db_name."';");
     $exec->execute();
 
