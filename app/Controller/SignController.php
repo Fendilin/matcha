@@ -242,7 +242,7 @@ class SignController extends Controller
             $this->flash->addMessage('danger', 'No user found !');
         }
 
-        return $res->withRedirect('/');
+        return $res->withRedirect($_SERVER['HTTP_REFERER']);
     }
 
     public function resetAction (Request $req, Response $res, $arg)

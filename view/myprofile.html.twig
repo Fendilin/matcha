@@ -38,6 +38,15 @@
             <div id="score-wrap" class="col-xs-3">
                 {{ data.score }}
             </div>
+            <form class="col-md-3" action="/password-reset" method="POST">
+                <div class="form-group">
+                    <input type="hidden" name="resetEmail" value="{{ data.email }}">
+                </div>
+                <div class="form-group">
+                    <button id="resetButton" class="btn btn-default form-control">Password Reinitialisation</button>
+                </div>
+                {{ csrf.field | raw }}
+            </form>
         </div>
         <div id="bio-wrap" class="pen-hover row col-xs-12">
             <a id="pen-bio" class="icon"><img src="{{ base_url() }}/img/pencil.png" /></a>

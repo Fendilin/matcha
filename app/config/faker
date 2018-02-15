@@ -54,10 +54,10 @@ function generateUser($i, $f) {
     $gender = rand(1,2);
     $orientation = rand(1,3);
     $bio = $f->paragraph;
-    $country = $f->country;
+    $country = substr($f->country, 0, 30);
     $state = '';
-    $city = $f->city;
-    $zip = $f->postcode;
+    $city = substr($f->city, 0,25);
+    $zip = substr($f->postcode, 0, 25);
     $score = rand(0,100);
     $token = md5(microtime(false));
     $token_date = $f->date("Y-m-d H:i:s");
@@ -104,7 +104,7 @@ function generateLikes($id, $f) {
         $sql = 'INSERT INTO likes (like_id, liked_id, like_date) VALUES ("'.$likerId.'","'.$id.'","'.($f->dateTimeBetween('-1 year', 'now'))->format('Y-m-d H:i:s').'");';
         $ret .= $sql.PHP_EOL;
     }
-    $maxView = rand($maxLikes, MAX_LIKES * 2);
+    $maxView = rand($maxLikes, MAX_LIKES * 4);
     for($i; $i <= $maxView; $i++) {
         $viewerId = rand(1, 500);
         $sql = 'INSERT INTO views (viewer_id, viewed_id, view_date) VALUES ("'.$viewerId.'","'.$id.'","'.($f->dateTimeBetween('-1 year', 'now'))->format('Y-m-d H:i:s').'");';
