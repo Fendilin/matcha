@@ -4,6 +4,7 @@ namespace App\Middleware;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Slim\Csrf\Guard;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -22,32 +23,34 @@ class CsrfViewMiddleware extends Middleware
         Response $response,
         callable $next
     ): Response {
-        $fields = $this->getCsrfFields();
+        $container = $this->container->get('csrf');
+        $fields = $this->getCsrfFields($container);
         $this->addGlobalFields($fields);
 
         return $response = $next($request, $response);
     }
 
     /**
+     * @param  Guard $container
      * @return string
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    private function getCsrfFields(): string
+    private function getCsrfFields(Guard $container): string
     {
-        $container = $this->container
-            ->get('csrf');
+        $tokenField = $this->createField(
+            $container->getTokenNameKey(),
+            $container->getTokenName()
+        );
+        $valueField = $this->createField(
+            $container->getTokenValueKey(),
+            $container->getTokenValue()
+        );
 
         return sprintf(
             '%s%s',
-            $this->createField(
-                $container->getTokenNameKey(),
-                $container->getTokenName()
-            ),
-            $this->createField(
-                $container->getTokenValueKey(),
-                $container->getTokenValue()
-            )
+            $tokenField,
+            $valueField
         );
     }
 
@@ -66,6 +69,7 @@ class CsrfViewMiddleware extends Middleware
     }
 
     /**
+     * @param  string $fields
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -76,9 +80,7 @@ class CsrfViewMiddleware extends Middleware
             ->getEnvironment()
             ->addGlobal(
                 'csrf',
-                [
-                    'field' => $fields,
-                ]
+                ['field' => $fields]
             );
     }
 }

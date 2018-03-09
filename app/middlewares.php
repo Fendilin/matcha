@@ -1,12 +1,11 @@
 <?php
 
-use App\Middleware\AuthMiddleware;
-use App\Middleware\ChatMiddleware;
-use App\Middleware\CsrfViewMiddleware;
-use App\Middleware\OldInputMiddleware;
+/**
+ * Middlewares
+ * https://www.slimframework.com/docs/v3/concepts/middleware.html
+ */
 
-$application->add(new AuthMiddleware($container));
-$application->add(new ChatMiddleware($container));
-$application->add(new CsrfViewMiddleware($container));
-$application->add(new OldInputMiddleware($container));
-$application->add($container->csrf);
+$application->add(new App\Middleware\OldInputMiddleware($container));
+$application->add(new App\Middleware\AuthMiddleware($container));
+$application->add(new App\Middleware\ChatMiddleware($container));
+$application->add(new App\Middleware\CsrfViewMiddleware($container));
