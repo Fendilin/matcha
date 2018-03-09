@@ -1,0 +1,41 @@
+<?php
+
+$application->get('/', '\App\Controller\SignController:signView')->setName('signView');
+$application->get('/registration', '\App\Controller\SignController:registerView')->setName('registerView');
+$application->get('/home', '\App\Controller\HomeController:homeView')->setName('homeView');
+$application->get('/search', '\App\Controller\SearchController:searchView')->setName('searchView');
+$application->get('/logout', '\App\Controller\HomeController:logout')->setName('logOut');
+$application->get('/profile/{username}', '\App\Controller\ProfileController:profileView')->setName('profile');
+$application->get('/activation/{username}/{token}', '\App\Controller\SignController:activation')->setName('activation');
+$application->get('/password-reset/{username}/{token}', '\App\Controller\SignController:resetView')->setName('resetView');
+$application->get('/profile/{username}/like', '\App\Controller\ProfileController:likeAction')->setName('likeAction');
+$application->get('/profile/{username}/unlike', '\App\Controller\ProfileController:unlikeAction')->setName('unlikeAction');
+$application->get('/profile/{username}/block', '\App\Controller\ProfileController:blockAction')->setName('blockAction');
+$application->get('/profile/{username}/unblock', '\App\Controller\ProfileController:unblockAction')->setName('unblockAction');
+$application->get('/profile/{username}/fake', '\App\Controller\ProfileController:fakeAction')->setName('fakeAction');
+$application->get('/profile/{username}/unfake', '\App\Controller\ProfileController:unfakeAction')->setName('unfakeAction');
+$application->get('/stillAlive', '\App\Controller\GeneralController:connectedAction')->setName('stillAlive');
+$application->get('/sort-by', '\App\Controller\HomeController:sortBy')->setName('sortBy');
+$application->get('/stillConnected', '\App\Controller\GeneralController:stillConnectAction')->setName('stillConnected');
+$application->get('/getMessages', '\App\Controller\ChatController::getMessagesAction')->setName('getMessages');
+$application->get('/addMessage', '\App\Controller\ChatController::addMessageAction')->setName('addMessage');
+$application->get('/newMessages', '\App\Controller\ChatController::newMessagesAction')->setName('newMessages');
+$application->get('/readAll', '\App\Controller\ChatController::readAllAction')->setName('readAll');
+$application->get('/getNotif', '\App\Controller\GeneralController::getNotifAction')->setName('getNotif');
+$application->get('/countNotif', '\App\Controller\GeneralController:countNotifAction')->setName('countNotif');
+$application->get('/readNotif', '\App\Controller\GeneralController:readNotifAction')->setName('readNotif');
+$application->get('/homeFilter', '\App\Controller\HomeController:homeFilter')->setName('homeFilter');
+$application->get('/searchFilter', '\App\Controller\SearchController:searchFilter')->setName('searchFilter');
+
+$application->post('/signup', '\App\Controller\SignController:signup')->setName('signup');
+$application->post('/signin', '\App\Controller\SignController:signin')->setName('signin');
+$application->post('/register', '\App\Controller\SignController:registration')->setName('register');
+$application->post('/password-reset', '\App\Controller\SignController:passwordReset')->setName('passwordReset');
+$application->post('/password-reset/{username}/{token}', '\App\Controller\SignController:resetAction')->setName('resetAction');
+$application->post('/resend-confirm', '\App\Controller\SignController:resendConfirm')->setName('resendConfirm');
+$application->post('/profile/{username}/upd/profile', '\App\Controller\ProfileController:updateProfile')->setName('updateProfile');
+$application->post('/profile/{username}/upd/info', '\App\Controller\ProfileController:updateInfo')->setName('updateInfo');
+$application->post('/profile/{username}/upd/bio', '\App\Controller\ProfileController:updateBio')->setName('updateBio');
+$application->post('/profile/{username}/upd/tag', '\App\Controller\ProfileController:updateTag')->setName('updateTag');
+$application->post('/profile/{username}/insert/img', '\App\Controller\ProfileController:updateImg')->setName('insertImg');
+$application->post('/profile/{username}/upd/img', '\App\Controller\ProfileController:updateImg')->setName('updateImg');

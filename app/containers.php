@@ -1,6 +1,6 @@
 <?php
 
-$container = $app->getContainer();
+$container = $application->getContainer();
 
 $container['view'] = function ($c) {
     $view = new \Slim\Views\Twig('../view', [
