@@ -2,16 +2,39 @@
 
 namespace App\Middleware;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class OldInputMiddleware extends Middleware
 {
-    public function __invoke (Request $req, Response $res, $next)
-    {
-        $this->container->view->getEnvironment()->addGlobal('old', $_SESSION['old']);
-        $_SESSION['old'] = $req->getParams();
+    const INDEX_GLOBAL  = 'old';
+    const INDEX_SESSION = 'old';
 
-        return $res = $next($req, $res);
+    /**
+     * @param  Request  $request
+     * @param  Response $response
+     * @param  callable $next
+     * @return Response
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
+    public function __invoke(
+        Request $request,
+        Response $response,
+        callable $next
+    ): Response {
+        $this->container
+            ->get('twig')
+            ->getEnvironment()
+            ->addGlobal(
+                self::INDEX_GLOBAL,
+                $_SESSION[self::INDEX_SESSION]
+            );
+
+        $_SESSION[self::INDEX_SESSION] = $request->getParams();
+
+        return $response = $next($request, $response);
     }
 }

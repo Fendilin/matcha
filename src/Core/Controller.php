@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Middleware;
+namespace App\Core;
 
 use Psr\Container\ContainerInterface;
 
-class Middleware
+class Controller
 {
     /**
      * @var ContainerInterface
@@ -18,4 +18,11 @@ class Middleware
     {
         $this->container = $container;
     }
+
+    public function __get($property) {
+        if ($this->container->{$property}) {
+            return $this->container->{$property};
+        }
+    }
+
 }

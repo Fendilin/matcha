@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Core\Controller;
 use App\Model\User;
 use App\Model\Tag;
 use Slim\Http\Request;

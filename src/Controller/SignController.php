@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-session_start();
-
+use App\Core\Controller;
 use App\Model\Tag;
 use App\Model\User;
 use App\Model\Validator;

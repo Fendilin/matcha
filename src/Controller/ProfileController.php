@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Core\Controller;
 use App\Model\Connected;
 use App\Model\Fake;
 use App\Model\Like;
@@ -12,8 +13,6 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Model\User;
 use App\Model\Tag;
-use Respect\Validation\Validator as v;
-
 
 class ProfileController extends Controller
 {

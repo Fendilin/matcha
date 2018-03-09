@@ -3,32 +3,74 @@
 namespace App\Model;
 
 use Slim\PDO\Database;
+use InvalidArgumentException;
 
 class Pdo
 {
-    private static $_instance;
-    private $db;
-    private $db_host = 'mysql';
-    private $db_name = 'matcha';
-    private $usr = 'root';
-    private $pwd = '';
+    /**
+     * @var Pdo
+     */
+    private static $instance;
 
+    /**
+     * @var Database
+     */
+    private $database;
+
+    /**
+     * @var array
+     */
+    private $config = [
+        'hostname' => 'localhost',
+        'username' => 'root',
+        'password' => 'root',
+        'database' => 'matcha',
+    ];
+
+    /**
+     * @throws InvalidArgumentException
+     */
     public function __construct()
     {
-        $dsn = 'mysql:host='.$this->db_host.';dbname='.$this->db_name.';charset=utf8';
-        $this->db = new Database($dsn, $this->usr, $this->pwd);
-    }
-
-    public static function getInstance()
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new Pdo();
+        if (
+            ! array_key_exists('hostname', $this->config)
+            || ! array_key_exists('username', $this->config)
+            || ! array_key_exists('password', $this->config)
+            || ! array_key_exists('database', $this->config)
+        ) {
+            throw new InvalidArgumentException();
         }
-        return self::$_instance;
+
+        $dsn = sprintf(
+            'mysql:host=%s;dbname=%s;charset=utf8',
+            $this->config['host'],
+            $this->config['database']
+        );
+
+        $this->database = new Database(
+            $dsn,
+            $this->config['username'],
+            $this->config['password']
+        );
     }
 
-    public function getDb()
+    /**
+     * @return Pdo
+     */
+    public static function getInstance(): Pdo
     {
-        return $this->db;
+        if (is_null(self::$instance)) {
+            self::$instance = new Pdo();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * @return Database
+     */
+    public function getDb(): Database
+    {
+        return $this->database;
     }
 }

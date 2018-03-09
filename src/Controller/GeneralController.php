@@ -2,14 +2,14 @@
 
 namespace App\Controller;
 
+use App\Core\Controller;
 use App\Model\Chat;
 use App\Model\Connected;
 use App\Model\Notif;
 use App\Model\Pdo;
 use App\Model\User;
-use Slim\Http\Response;
 use Slim\Http\Request;
-
+use Slim\Http\Response;
 
 class GeneralController extends Controller
 {

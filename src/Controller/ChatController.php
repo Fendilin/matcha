@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
+use App\Core\Controller;
 use App\Model\Chat;
 use App\Model\User;
-use Slim\Http\Response;
 use Slim\Http\Request;
-
+use Slim\Http\Response;
 
 class ChatController extends Controller
 {

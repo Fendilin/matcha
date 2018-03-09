@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Middleware;
+namespace App\Core;
 
 use Psr\Container\ContainerInterface;
 
-class Middleware
+class Container
 {
     /**
      * @var ContainerInterface
