@@ -4,7 +4,7 @@ Dating website using PHP.
 
 ## 1. Install
 
-```sh
+```
 # build Docker containers
 make build
 
