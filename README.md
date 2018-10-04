@@ -4,12 +4,9 @@ Dating website using PHP.
 
 ## 1. Install
 
-```sh
-# build Docker containers
-make build
+```php
+echo "lol";
 
-# install dependencies
-make install
 ```
 
 ## 2. Use
